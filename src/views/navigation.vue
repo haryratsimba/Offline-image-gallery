@@ -1,34 +1,47 @@
 <template>
-  <header class="navbar">
-    <section class="navbar-section">
-      <h1 class="navbar-brand mr-2">
+  <nav
+    class="light-blue lighten-1"
+    role="navigation"
+  >
+    <div class="nav-wrapper container">
+      <a
+        id="logo-container"
+        href="#"
+        class="brand-logo"
+      >
         Gallery
-      </h1>
-      <router-link
-        to="/gallery/category-1"
-        class="btn btn-link"
-      >
-        Catégorie 1
-      </router-link>
-      <router-link
-        to="/gallery/category-2"
-        class="btn btn-link"
-      >
-        Catégorie 2
-      </router-link>
-      <router-link
-        to="/gallery/category-3"
-        class="btn btn-link"
-      >
-        Catégorie 3
-      </router-link>
-    </section>
-    <section class="navbar-section">
-      <div class="input-group input-inline">
-        <span class="label label-rounded label-error py-2">
-          You are offline <i class="icon icon-stop" />
-        </span>
-      </div>
-    </section>
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li>
+          <router-link
+            to="/gallery/category-1"
+          >
+            Catégorie 1
+          </router-link>
+        </li><li>
+          <router-link
+            to="/gallery/category-2"
+          >
+            Catégorie 2
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/gallery/category-3"
+          >
+            Catégorie 3
+          </router-link>
+        </li>
+        </li>
+      </ul>
+    </div>
+  </nav>
   </header>
 </template>
+
+<style>
+  .navbar {
+    padding: 20px 80px;
+    box-shadow: 0 4px 2px -2px lightgray;
+  }
+</style>
