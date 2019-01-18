@@ -1,11 +1,6 @@
 <template>
   <div>
     <navigation />
-
-    <div class="progress">
-      <div class="indeterminate" />
-    </div>
-
     <router-view />
   </div>
 </template>
