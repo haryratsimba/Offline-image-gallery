@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="light-blue lighten-1"
+    class="blue-grey darken-4"
     role="navigation"
   >
     <div class="nav-wrapper container">
@@ -14,29 +14,28 @@
       <ul class="right hide-on-med-and-down">
         <li>
           <router-link
-            to="/gallery/category-1"
+            to="/gallery/travel"
           >
-            Catégorie 1
+            Travel
           </router-link>
         </li><li>
           <router-link
-            to="/gallery/category-2"
+            to="/gallery/nature"
           >
-            Catégorie 2
+            Nature
           </router-link>
         </li>
         <li>
           <router-link
-            to="/gallery/category-3"
+            to="/gallery/architecture"
           >
-            Catégorie 3
+            Architecture
           </router-link>
         </li>
         </li>
       </ul>
     </div>
   </nav>
-  </header>
 </template>
 
 <style>
