@@ -1,9 +1,14 @@
 <template>
-    <div>App</div>
+  <div>App</div>
 </template>
 
 <script>
 export default {
-    name: "app"
+  name: 'App'
+}
+
+const t = true
+if (t) {
+  console.log('test')
 }
 </script>

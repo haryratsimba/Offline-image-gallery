@@ -27,6 +27,19 @@ module.exports = {
     },
     module: {
         rules: [
+            // eslint loader. Lint .js and .vue files
+            // Make sure rules are defined in a .eslintrc file
+            // https://www.robinwieruch.de/react-eslint-webpack-babel/#eslint
+            {
+                test: /\.(js|vue)$/,
+                include: [resolve('src')],
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+                enforce: 'pre',
+                options: {
+                    emitWarning: true
+                }
+            },
             {
                 // vue-loader config to load `.vue` files or single file components.
                 test: /\.vue$/,
