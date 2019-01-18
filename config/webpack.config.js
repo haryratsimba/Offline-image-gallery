@@ -43,19 +43,7 @@ module.exports = {
       {
         // vue-loader config to load `.vue` files or single file components.
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-            // https://vue-loader.vuejs.org/guide/scoped-css.html#mixing-local-and-global-styles
-            css: ['vue-style-loader', {
-              loader: 'css-loader'
-            }],
-            js: [
-              'babel-loader'
-            ]
-          },
-          cacheBusting: true
-        }
+        loader: 'vue-loader'
       },
       {
         // This is required for other javascript you are gonna write besides vue.
@@ -64,6 +52,15 @@ module.exports = {
         include: [
           resolve('src'),
           resolve('node_modules/webpack-dev-server/client')
+        ]
+      },
+      // this will apply to both plain `.css` files
+      // AND `<style>` blocks in `.vue` files
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
         ]
       }
     ]

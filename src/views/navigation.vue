@@ -19,3 +19,9 @@
     </ul>
   </div>
 </template>
+
+<style scoped>
+#navigation {
+  text-align: center;
+}
+</style>
