@@ -1,14 +1,17 @@
 <template>
-  <div>App</div>
+  <div>
+    <navigation />
+    <router-view />
+  </div>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+import Navigation from './navigation'
 
-const t = true
-if (t) {
-  console.log('test')
+export default {
+  name: 'App',
+  components: {
+    Navigation
+  }
 }
 </script>
