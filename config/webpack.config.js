@@ -110,7 +110,8 @@ module.exports = {
          */
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      // Use @ as root alias
+      // Congigure @ as an alias for root in JS files
+      // eg : import x from '@/src'
       '@': resolve('src')
     },
     extensions: ['*', '.vue', '.js', '.json']
