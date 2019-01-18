@@ -1,11 +1,12 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
-import App from './views/app';
+import App from './views/app'
 
-window.onload = ()=> {
-    new Vue({
-        el: '#app',
-        components: { App },
-        template: '<App/>'
-    })
+window.onload = () => {
+  // eslint-disable-next-line no-new
+  new Vue({
+    el: '#app',
+    components: { App },
+    template: '<App/>'
+  })
 }
