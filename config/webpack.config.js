@@ -72,7 +72,9 @@ module.exports = {
       }
     ]
   },
-  devtool: 'eval',
+  // Use this option as this is a demo app
+  // switch to source-map for production
+  devtool: 'eval-source-map',
   devServer: {
     // The url you want the webpack-dev-server to use for serving files.
     host: '0.0.0.0',
