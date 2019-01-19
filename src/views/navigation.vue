@@ -32,7 +32,6 @@
             Architecture
           </router-link>
         </li>
-        </li>
       </ul>
     </div>
   </nav>

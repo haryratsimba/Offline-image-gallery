@@ -6,6 +6,13 @@ const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+// Use this plugin to integrate the service worker file in the webpack build.
+// It also allows to configure Service workers cache with dynamic assets name (Webpack build can generate different files names)
+// Then exposes configured options to the Service worker JS file (https://github.com/oliviertassinari/serviceworker-webpack-plugin/blob/master/docs/webpack/baseConfig.js)
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin')
+
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 /**
  * `..` Since this config file is in the config folder so we need
  * to resolve path in the top level folder.
@@ -98,7 +105,19 @@ module.exports = {
       title: 'Offline image gallery',
       template: './index.html',
       filename: 'index.html'
-    })
+    }),
+    new ServiceWorkerWebpackPlugin({
+      entry: resolve('src/sw.js')
+    }),
+    // Static assets, if not imported explicitely with the "import" statement in scripts files, will not be part of the Webpack bundled
+    // as it cannot detect dependencies. Use this plugin to copy static assets into the Webpack bundle
+    // so it can be referenced (eg : we can link statics files in domain/assets/)
+    new CopyWebpackPlugin([
+      {
+        from: 'src/assets',
+        to: 'assets'
+      }
+    ])
   ],
   resolve: {
     /**
