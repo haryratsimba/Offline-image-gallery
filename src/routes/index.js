@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Gallery from '@/views/gallery'
+import Content from '@/views/content'
 
 Vue.use(VueRouter)
 
@@ -10,7 +10,7 @@ export default new VueRouter({
     {
       // Gallery with optionnal category name
       path: '/gallery/:category?',
-      component: Gallery
+      component: Content
     },
     {
       path: '*',
