@@ -57,19 +57,7 @@ export default {
   data () {
     return {
       isFillingCacheForOffline: true,
-      // TODO: Fetch images urls from the API
-      images: [
-        'https://pixabay.com/get/ea3cb20c2cfc003ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20a28f3053ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb3092af3003ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20e21fd083ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20c2cf3093ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20c2cfc013ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20e21f5063ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb3062af5083ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20d2bf6053ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
-        'https://pixabay.com/get/ea3cb20928f0023ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg'
-      ]
+      images: []
     }
   },
   // Fetch the images when :category param changes
@@ -82,8 +70,15 @@ export default {
     this.fetchImagesByCategory()
   },
   methods: {
-    fetchImagesByCategory () {
-      console.log(this.$route.params.category)
+    async fetchImagesByCategory () {
+      try {
+        const response = await fetch(`https://pixabay.com/api/?key=11329549-fe0c285d676a88f0bc91f48ed&image_type=photo&category=${this.$route.params.category}&safesearch=true&per_page=10`)
+        const json = await response.json()
+
+        this.images = json.hits.map(items => items.webformatURL)
+      } catch (e) {
+        console.log(e)
+      }
     },
     addImagesToCache () {
       console.log('Add current category images to the cache')

@@ -14,7 +14,7 @@ export default new VueRouter({
     },
     {
       path: '*',
-      redirect: '/gallery'
+      redirect: '/gallery/travel'
     }
   ]
 })
