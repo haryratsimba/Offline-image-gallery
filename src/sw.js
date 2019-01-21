@@ -17,7 +17,7 @@ self.oninstall = event => {
   )
 }
 
-self.activate = event => {
+self.onactivate = event => {
   // This script will now be the active SW
   if (self.clients && self.clients.claim) {
     self.clients.claim()
@@ -45,15 +45,16 @@ self.activate = event => {
 self.onfetch = event => {
   const requestURL = new URL(event.request.url)
 
-  console.log(requestURL)
-
   if ('pixabay.com/api/'.includes(requestURL.hostname + requestURL.pathname)) {
     event.respondWith(getAPIResponse(event.request))
   } else if (requestURL.hostname === 'pixabay.com') {
     event.respondWith(getImagesFromCache(event.request))
   } else {
     // Anything not related to the image provider should be fetch from the cache first
-    event.respondWith(caches.match(event.request))
+    event.respondWith(async () => {
+      const cachedResponse = await global.caches.match(event.request)
+      return cachedResponse
+    })
   }
 }
 
