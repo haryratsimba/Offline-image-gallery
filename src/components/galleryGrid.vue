@@ -21,14 +21,16 @@ export default {
       default: () => 12
     }
   },
-  // Render a grid with the nb of columns per rows, specified in the "colsPerRow" prop
-  // eg :   colsPerRow = 3
-  //        maxColPerRow = 12
-  // <div class="row">
-  //    <div class="col m4"><img/></div> => "m4" stands for 4units in 12 cols units (@see materialize-css grids)
-  //    <div class="col m4"><img/></div>
-  //    <div class="col m4"><img/></div>
-  // </div>
+  /*
+   * Render a grid with the nb of columns per rows, specified in the "colsPerRow" prop
+   * eg :   colsPerRow = 3
+   *        maxColPerRow = 12
+   * <div class="row">
+   *    <div class="col m4"><img/></div> => "m4" stands for 4units in 12 cols units (@see materialize-css grids)
+   *    <div class="col m4"><img/></div>
+   *    <div class="col m4"><img/></div>
+   * </div>
+   */
   render: function (createElement) {
     const rows = []
 

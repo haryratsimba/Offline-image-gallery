@@ -57,6 +57,7 @@ export default {
   data () {
     return {
       isFillingCacheForOffline: true,
+      // TODO: Fetch images urls from the API
       images: [
         'https://pixabay.com/get/ea3cb20c2cfc003ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',
         'https://pixabay.com/get/ea3cb20a28f3053ed1584d05fb1d4797e075ebd01db80c4090f4c671afebb4b9d0_1280.jpg',

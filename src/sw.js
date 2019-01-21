@@ -16,6 +16,14 @@ self.oninstall = event => {
   )
 }
 
+/*
+ * Intercept fetch requests using the following rules :
+ * Always check the event request url
+ * - Get app specific resources from the cache
+ * - Always try to fetch the "GET images urls" request from the server because photos are filtered by popularity, which may change everyday
+ *   - If it fails, pick from the cache
+ * - Do not cache images resources to save storage space. Let the user save on-demand the images in the cache
+ */
 self.onfetch = event => {
   event.respondWith(
     // Return cache resources, including app files registred in the installation phase
@@ -23,9 +31,11 @@ self.onfetch = event => {
       if (response) {
         return response
       } else {
-        // The resource is not cached
-        // Fetch only app caches files and API requests
-        // not images, as it may take some space. The user should have the control over its image storage
+        /*
+         * The resource is not cached
+         * Fetch only app caches files and API requests
+         * not images, as it may take some space. The user should have the control over its image storage
+         */
 
         console.log('Need to fetch the API and cache the response, then return the response')
         // TODO: Check the URL to cache only API requests, not imgs
