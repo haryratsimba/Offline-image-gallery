@@ -1,3 +1,10 @@
+<style scoped>
+>>> .col {
+  overflow-y: hidden;
+  max-height: 222px;
+}
+</style>
+
 <script>
 /**
  * Gallery component to display images in grid mode.

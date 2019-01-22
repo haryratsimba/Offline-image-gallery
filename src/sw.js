@@ -46,13 +46,14 @@ self.onactivate = event => {
 self.onfetch = event => {
   const requestURL = new URL(event.request.url)
 
+  console.log('Fetch : ', event.request.url)
+
   if ('pixabay.com/api/'.includes(requestURL.hostname + requestURL.pathname)) {
     event.respondWith(getAPIResponse(event.request))
   } else if (requestURL.hostname === 'pixabay.com') {
     event.respondWith(getFromCache(event.request, './assets/imgs/no-image-placehoder.jpg'))
   } else {
     // Anything not related to the image provider should be fetch from the cache first, then from server. Do not try to update the cache
-    console.log('Trying to get the following resources from the cache :', requestURL)
     event.respondWith(getFromCache(event.request))
   }
 }
@@ -90,13 +91,15 @@ async function getAPIResponse (request) {
  * @param {string} fallbackFromCache (generally a request url / resource location) that need to be used as fallback response (eg : a placeholder image)
  */
 async function getFromCache (request, fallbackFromCache) {
+  console.log('Trying to get the following resources from the cache :', request.url)
+
   const cachedResponse = await global.caches.match(request)
   if (cachedResponse) {
     return cachedResponse
   }
 
   try {
-    const networkResponse = await fetch(request)
+    const networkResponse = await fetch(request, { cache: 'no-store' })
 
     /*
      * Pixabay images are served without cors-headers, so by default, fetch will use the "no-cors" option. The result is that the response is "Opaque"

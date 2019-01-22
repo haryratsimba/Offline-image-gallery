@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      isFillingCacheForOffline: true,
+      isFillingCacheForOffline: false,
       images: []
     }
   },
@@ -78,6 +78,7 @@ export default {
         this.images = json.hits.map(items => items.webformatURL)
       } catch (e) {
         console.log(e)
+        this.images = [...Array(10)].map(() => '/assets/imgs/no-image-placehoder.jpg')
       }
     },
     addImagesToCache () {
