@@ -26,6 +26,7 @@ self.onactivate = event => {
   // Clear images cache (don't update the global cache where the app specific files are loaded)
   event.waitUntil(
     global.caches.keys().then(cacheNames => {
+      console.log('Clear the existing cache', cacheNames)
       // Delete api cache entries
       return Promise.all(
         cacheNames.filter(cacheName => cacheName === apiCacheName).map(cacheName => caches.delete(cacheName))
@@ -48,13 +49,11 @@ self.onfetch = event => {
   if ('pixabay.com/api/'.includes(requestURL.hostname + requestURL.pathname)) {
     event.respondWith(getAPIResponse(event.request))
   } else if (requestURL.hostname === 'pixabay.com') {
-    event.respondWith(getImagesFromCache(event.request))
+    event.respondWith(getFromCache(event.request, './assets/imgs/no-image-placehoder.jpg'))
   } else {
-    // Anything not related to the image provider should be fetch from the cache first
-    event.respondWith(async () => {
-      const cachedResponse = await global.caches.match(event.request)
-      return cachedResponse
-    })
+    // Anything not related to the image provider should be fetch from the cache first, then from server. Do not try to update the cache
+    console.log('Trying to get the following resources from the cache :', requestURL)
+    event.respondWith(getFromCache(event.request))
   }
 }
 
@@ -84,12 +83,13 @@ async function getAPIResponse (request) {
 /*
  * Retrieve image in the following order :
  * 1) From the cache
- * 2) From the network
- * 3) Return a placeholder image if the previous scenarios failed
+ * 2) From the network. Don't update the cache
+ * 3) If the "fallbackFromCache" argument is provided, return the fallback resource if the previous scenarios failed
  *
  * @param {*} request
+ * @param {string} fallbackFromCache (generally a request url / resource location) that need to be used as fallback response (eg : a placeholder image)
  */
-async function getImagesFromCache (request) {
+async function getFromCache (request, fallbackFromCache) {
   const cachedResponse = await global.caches.match(request)
   if (cachedResponse) {
     return cachedResponse
@@ -97,11 +97,19 @@ async function getImagesFromCache (request) {
 
   try {
     const networkResponse = await fetch(request)
-    if (!networkResponse.ok) {
+
+    /*
+     * Pixabay images are served without cors-headers, so by default, fetch will use the "no-cors" option. The result is that the response is "Opaque"
+     *(status is 0, statusText is empty, empty headers) and we don't really know if it failed or not. That is a risk when dealing with fetch
+     * and resources served without cors-headers. Just assume it worked (https://filipbech.github.io/2017/02/service-worker-and-caching-from-other-origins
+     */
+    if (networkResponse.type !== 'opaque' && !networkResponse.ok && fallbackFromCache) {
       throw new Error(networkResponse.statusText)
+    } else {
+      return networkResponse.clone()
     }
   } catch (e) {
-    const defaultReponse = await global.caches.match('./assets/imgs/no-image-placehoder.jpg')
+    const defaultReponse = await global.caches.match(fallbackFromCache)
     return defaultReponse
   }
 }
