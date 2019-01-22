@@ -38,10 +38,9 @@ self.onactivate = event => {
 /*
  * Intercept fetch requests using the following rules :
  * Always check the event request url
- * - Get app specific resources from the cache
- * - Always try to fetch the "GET images urls" request from the server because photos are filtered by popularity, which may change everyday
- *   - If it fails, pick from the cache
- * - Do not cache images resources to save storage space. Let the user save on-demand the images in the cache
+ * - Network first for api requests to get the most recent content (images are sorted by popularity). If it fails, load from the cache
+ * - Cache first for any others requests (static resources such as images, scripts etc.)
+ *  - If images are not available (eg : server or network issues), make sure to load a placeholder image that must be available in the cache
  */
 self.onfetch = event => {
   const requestURL = new URL(event.request.url)
@@ -49,31 +48,28 @@ self.onfetch = event => {
   console.log('Fetch : ', event.request.url)
 
   if ('pixabay.com/api/'.includes(requestURL.hostname + requestURL.pathname)) {
-    event.respondWith(getAPIResponse(event.request))
+    event.respondWith(getAPIContent(event.request))
   } else if (requestURL.hostname === 'pixabay.com') {
-    event.respondWith(getFromCache(event.request, './assets/imgs/no-image-placehoder.jpg'))
+    event.respondWith(getContentFromCache(event.request, './assets/imgs/no-image-placehoder.jpg'))
   } else {
     // Anything not related to the image provider should be fetch from the cache first, then from server. Do not try to update the cache
-    event.respondWith(getFromCache(event.request))
+    event.respondWith(getContentFromCache(event.request))
   }
 }
 
 /**
- * Get API data from the server and update the cache.
- * If if fails, get data from the cache.
+ * Get API data from the server. If if fails, get data from the cache.
  *
  * @param {*} request
  */
-async function getAPIResponse (request) {
+async function getAPIContent (request) {
   try {
-    let response = await fetch(request)
+    // Append a timestamp to the url to prevent the browser from caching API requests
+    let response = await fetch(request.url + '&' + (+new Date()))
 
     if (!response.ok) {
       throw new Error(response.statusText)
     }
-
-    const cache = await global.caches.open(apiCacheName)
-    cache.put(request, response.clone())
 
     return response
   } catch (e) {
@@ -82,7 +78,7 @@ async function getAPIResponse (request) {
 }
 
 /*
- * Retrieve image in the following order :
+ * Retrieve static content (eg : images, scripts etc.) in the following order :
  * 1) From the cache
  * 2) From the network. Don't update the cache
  * 3) If the "fallbackFromCache" argument is provided, return the fallback resource if the previous scenarios failed
@@ -90,7 +86,7 @@ async function getAPIResponse (request) {
  * @param {*} request
  * @param {string} fallbackFromCache (generally a request url / resource location) that need to be used as fallback response (eg : a placeholder image)
  */
-async function getFromCache (request, fallbackFromCache) {
+async function getContentFromCache (request, fallbackFromCache) {
   console.log('Trying to get the following resources from the cache :', request.url)
 
   const cachedResponse = await global.caches.match(request)
