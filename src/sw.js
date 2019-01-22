@@ -1,5 +1,7 @@
 const globalCacheName = 'gallery-v1'
-const apiCacheName = 'api'
+
+// Cache entries such as API response or images will start with a predefined prefix. If will be easier to clean the cache based on the prefix
+const apiCachePrefix = 'offline-api-'
 
 // Cache static resources needed to display the app offline
 self.oninstall = event => {
@@ -29,7 +31,7 @@ self.onactivate = event => {
       console.log('Clear the existing cache', cacheNames)
       // Delete api cache entries
       return Promise.all(
-        cacheNames.filter(cacheName => cacheName === apiCacheName).map(cacheName => caches.delete(cacheName))
+        cacheNames.filter(cacheName => cacheName.includes(apiCachePrefix)).map(cacheName => caches.delete(cacheName))
       )
     })
   )
@@ -95,7 +97,8 @@ async function getContentFromCache (request, fallbackFromCache) {
   }
 
   try {
-    const networkResponse = await fetch(request, { cache: 'no-store' })
+    // Explicitely append the timestamp to the image url to prevent the browser from caching the image
+    const networkResponse = await fetch(request.url + '&' + (+new Date()))
 
     /*
      * Pixabay images are served without cors-headers, so by default, fetch will use the "no-cors" option. The result is that the response is "Opaque"
