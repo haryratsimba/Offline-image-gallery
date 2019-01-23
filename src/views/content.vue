@@ -22,12 +22,12 @@
         >
           Save for offline vizualisation
         </a>
-        <!-- <a
+        <a
           class="red btn"
           @click="clearCategoryFromCache"
         >
           Clear cache
-        </a> -->
+        </a>
       </div>
 
       <!-- Image gallery -->
@@ -68,11 +68,14 @@ export default {
     currentCategoryCacheName () {
       return `offline-api-${this.$route.params.category}`
     },
+    currentCategoryImgCacheName () {
+      return `offline-img-${this.$route.params.category}`
+    },
     isCacheAPIAvailable () {
       return 'caches' in window
     }
   },
-  // Fetch the images when :category param changes
+  // Fetch the images when /gallery :category param changes
   watch: {
     '$route.params.category': function (category) {
       this.fetchImagesByCategory()
@@ -96,20 +99,25 @@ export default {
       }
     },
     async addCategoryToCache () {
-      console.log('Add current category images to the cache')
-
       this.isAddingCacheForOffline = true
 
       try {
         const response = await fetch(this.currentCategoryAPIURL)
-        const cache = await caches.open(this.currentCategoryCacheName)
+        const json = await response.clone().json()
 
-        cache.add(this.currentCategoryAPIURL, response.clone())
+        // Cache all images received from the API response. addAll fetch automatically the resource from the server and cache
+        const imgCache = await caches.open(this.currentCategoryImgCacheName)
+        await imgCache.addAll(json.hits.map(img => img.webformatURL))
 
-        console.log('Successfully added the request response to the cache !')
+        // Cache the API request / response after fetching from the server
+        const categoryCache = await caches.open(this.currentCategoryCacheName)
+        await categoryCache.put(this.currentCategoryAPIURL, response.clone())
+
+        console.log(`Successfully added "${this.$route.params.category}" category content to the cache !`)
       } catch (e) {
         // Network error or bad request
         // TODO: Inform the user that the "add to cache" process has failed due to network issues
+        console.log(`Category caching couldn't be proceed`, e)
       } finally {
         this.isAddingCacheForOffline = false
       }

@@ -1,3 +1,12 @@
+/**
+ * To explicitely use the Cache API both in client and service worker side, we will prevent the browser
+ * from caching automatically any requests and resources, by adding a timestamp to the following resources that need to be explicitely cached :
+ * - API requests (which contains images urls)
+ * - Images resources received from API requests
+ * Explicitely cached means the user will have to choose which content he wants to cache for offline mode.
+ *
+ * The service worker won't cache anything, just fetch or retrive data from cache depending on the strategy.
+ */
 const globalCacheName = 'gallery-v1'
 
 // Cache entries such as API response or images will start with a predefined prefix. If will be easier to clean the cache based on the prefix
@@ -42,7 +51,7 @@ self.onactivate = event => {
  * Always check the event request url
  * - Network first for api requests to get the most recent content (images are sorted by popularity). If it fails, load from the cache
  * - Cache first for any others requests (static resources such as images, scripts etc.)
- *  - If images are not available (eg : server or network issues), make sure to load a placeholder image that must be available in the cache
+ *   - If images are not available (eg : server or network issues), make sure to load a placeholder image that must be available in the cache
  */
 self.onfetch = event => {
   const requestURL = new URL(event.request.url)
