@@ -70,10 +70,10 @@ export default {
     // Each category has its own cache entry because the user can cache specific categories.
     // It allows to clear from the cache specific images per category before fetching the lastest images from the server
     currentCategoryCacheName () {
-      return `offline-api-${this.$route.params.category}`
+      return `offline-app-api-${this.$route.params.category}`
     },
     currentCategoryImgCacheName () {
-      return `offline-img-${this.$route.params.category}`
+      return `offline-app-img-${this.$route.params.category}`
     },
     isCacheAPIAvailable () {
       return 'caches' in window
@@ -134,9 +134,10 @@ export default {
         this.isAddingCacheForOffline = false
       }
     },
-    clearCategoryFromCache () {
-      // TODO: Clear requests + images from the cache for the current category
+    async clearCategoryFromCache () {
       console.log('Clear current category images from the cache')
+      await caches.delete(this.currentCategoryCacheName)
+      await caches.delete(this.currentCategoryImgCacheName)
 
       this.unmarkCategoryAsCached()
     },

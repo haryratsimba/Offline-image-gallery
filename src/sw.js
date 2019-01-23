@@ -10,7 +10,7 @@
 const globalCacheName = 'gallery-v1'
 
 // Cache entries such as API response or images will start with a predefined prefix. If will be easier to clean the cache based on the prefix
-const apiCachePrefix = 'offline-api-'
+const apiCachePrefix = 'offline-app-'
 
 // Cache static resources needed to display the app offline
 self.oninstall = event => {
