@@ -91,7 +91,7 @@ async function getAPIContent (request) {
 async function getContentFromCache (request, fallbackFromCache) {
   console.log('Trying to get the following resources from the cache :', request.url)
 
-  const cachedResponse = await global.caches.match(request)
+  const cachedResponse = await global.caches.match(request, { ignoreVary: true })
   if (cachedResponse) {
     return cachedResponse
   }

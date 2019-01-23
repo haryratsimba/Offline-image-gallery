@@ -104,7 +104,7 @@ export default {
         const response = await fetch(this.currentCategoryAPIURL)
         const cache = await caches.open(this.currentCategoryCacheName)
 
-        cache.add(this.currentCategoryAPIURL, response)
+        cache.add(this.currentCategoryAPIURL, response.clone())
 
         console.log('Successfully added the request response to the cache !')
       } catch (e) {
