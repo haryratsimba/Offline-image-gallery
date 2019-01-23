@@ -1,6 +1,7 @@
 <template>
   <div>
     <navigation />
+    <Toast-container />
     <router-view />
   </div>
 </template>
@@ -15,6 +16,7 @@
 import 'materialize-css/dist/css/materialize.min.css'
 
 import Navigation from './navigation'
+import ToastContainer from './toastsContainer'
 
 // Service Worker runtime, provided by serviceworker-webpack-plugin
 import runtime from 'serviceworker-webpack-plugin/lib/runtime'
@@ -22,7 +24,8 @@ import runtime from 'serviceworker-webpack-plugin/lib/runtime'
 export default {
   name: 'App',
   components: {
-    Navigation
+    Navigation,
+    ToastContainer
   },
   created () {
     if ('serviceWorker' in navigator) {
