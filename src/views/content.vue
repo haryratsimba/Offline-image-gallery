@@ -17,7 +17,7 @@
       >
         <a
           v-if="isCacheAPIAvailable"
-          class="waves-effect waves-light btn"
+          :class="`waves-effect waves-light btn ${isCurrentCategoMarkedAsCached ? 'disabled' : ''}`"
           @click="addCategoryToCache"
         >
           Save for offline vizualisation
@@ -58,6 +58,8 @@ export default {
   data () {
     return {
       isAddingCacheForOffline: false,
+      // Is the current gallery category content is cached
+      isCurrentCategoMarkedAsCached: false,
       images: []
     }
   },
@@ -65,6 +67,8 @@ export default {
     currentCategoryAPIURL () {
       return `https://pixabay.com/api/?key=11329549-fe0c285d676a88f0bc91f48ed&image_type=photo&category=${this.$route.params.category}&safesearch=true&per_page=10`
     },
+    // Each category has its own cache entry because the user can cache specific categories.
+    // It allows to clear from the cache specific images per category before fetching the lastest images from the server
     currentCategoryCacheName () {
       return `offline-api-${this.$route.params.category}`
     },
@@ -78,11 +82,16 @@ export default {
   // Fetch the images when /gallery :category param changes
   watch: {
     '$route.params.category': function (category) {
+      this.isCurrentCategoMarkedAsCached = this.isCategoryMarkedAsCached()
+
       this.fetchImagesByCategory()
     }
   },
   created () {
     this.fetchImagesByCategory()
+  },
+  mounted () {
+    this.isCurrentCategoMarkedAsCached = this.isCategoryMarkedAsCached()
   },
   methods: {
     async fetchImagesByCategory () {
@@ -107,11 +116,14 @@ export default {
 
         // Cache all images received from the API response. addAll fetch automatically the resource from the server and cache
         const imgCache = await caches.open(this.currentCategoryImgCacheName)
+
         await imgCache.addAll(json.hits.map(img => img.webformatURL))
 
         // Cache the API request / response after fetching from the server
         const categoryCache = await caches.open(this.currentCategoryCacheName)
         await categoryCache.put(this.currentCategoryAPIURL, response.clone())
+
+        this.markCategoryAsCached()
 
         console.log(`Successfully added "${this.$route.params.category}" category content to the cache !`)
       } catch (e) {
@@ -123,8 +135,23 @@ export default {
       }
     },
     clearCategoryFromCache () {
-      // TODO: Make sure to clear only images and not requests from the cache
+      // TODO: Clear requests + images from the cache for the current category
       console.log('Clear current category images from the cache')
+
+      this.unmarkCategoryAsCached()
+    },
+    // Use the local storage to keep track of cached category
+    // This allows us to enabled / disable the "Save for offline..." button
+    markCategoryAsCached () {
+      localStorage.setItem(this.$route.params.category, true)
+      this.isCurrentCategoMarkedAsCached = true
+    },
+    unmarkCategoryAsCached () {
+      localStorage.removeItem(this.$route.params.category)
+      this.isCurrentCategoMarkedAsCached = false
+    },
+    isCategoryMarkedAsCached () {
+      return this.$route.params.category in localStorage
     }
   }
 }
