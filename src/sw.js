@@ -38,7 +38,7 @@ self.onactivate = event => {
   event.waitUntil(
     global.caches.keys().then(cacheNames => {
       console.log('Clear the existing cache', cacheNames)
-      // Delete api cache entries
+      // Delete API cache entries
       return Promise.all(
         cacheNames.filter(cacheName => cacheName.includes(apiCachePrefix)).map(cacheName => caches.delete(cacheName))
       )
@@ -49,7 +49,7 @@ self.onactivate = event => {
 /*
  * Intercept fetch requests using the following rules :
  * Always check the event request url
- * - Network first for api requests to get the most recent content (images are sorted by popularity). If it fails, load from the cache
+ * - Network first for API requests to get the most recent content (images are sorted by popularity). If it fails, load from the cache
  * - Cache first for any others requests (static resources such as images, scripts etc.)
  *   - If images are not available (eg : server or network issues), make sure to load a placeholder image that must be available in the cache
  */
@@ -75,7 +75,8 @@ self.onfetch = event => {
  */
 async function getAPIContent (request) {
   try {
-    // Append a timestamp to the url to prevent the browser from caching API requests
+    // Append a timestamp to the url to prevent the browser from caching API requests.
+    // If there is no timestamp, the browser will cache the request and fetch won't hit the server because the request / response is already cached
     let response = await fetch(request.url + '&' + (+new Date()))
 
     if (!response.ok) {
