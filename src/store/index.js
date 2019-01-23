@@ -4,9 +4,6 @@
 export default {
   state: {
     // Toast messages looks like { message: string, color: string }
-    toastMessages: [{
-      message: 'test',
-      color: 'red'
-    }]
+    toastMessages: []
   }
 }

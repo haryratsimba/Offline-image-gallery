@@ -15,7 +15,7 @@ export default {
 }
 
 function addToastMessage (message, color) {
-  store.state.toastMessages.unshift({ message, color: 'red' })
+  store.state.toastMessages.unshift({ message, color })
 
   // Remove the toast message from the store after a delay
   setTimeout(() => {

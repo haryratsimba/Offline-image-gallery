@@ -23,7 +23,7 @@
           Save for offline vizualisation
         </a>
         <a
-          class="red btn"
+          :class="`red btn ${!isCurrentCategoMarkedAsCached ? 'disabled' : ''}`"
           @click="clearCategoryFromCache"
         >
           Clear cache
@@ -51,10 +51,13 @@
 <script>
 import GalleryGrid from '@/components/galleryGrid'
 
+import ToastsMixin from '@/mixins/toastsMixin'
+
 export default {
   components: {
     GalleryGrid
   },
+  mixins: [ToastsMixin],
   data () {
     return {
       isAddingCacheForOffline: false,
@@ -103,6 +106,8 @@ export default {
       } catch (e) {
         console.log(e)
 
+        this.$error(`It looks like you have a network issue !`)
+
         // Use placeholder image available in the cache. Each category is composed of 10 images
         this.images = [...Array(10)].map(() => '/assets/imgs/no-image-placehoder.jpg')
       }
@@ -125,11 +130,12 @@ export default {
 
         this.markCategoryAsCached()
 
-        console.log(`Successfully added "${this.$route.params.category}" category content to the cache !`)
+        this.$success(`The category "${this.$route.params.category}" has been successfully saved !`)
       } catch (e) {
         // Network error or bad request
-        // TODO: Inform the user that the "add to cache" process has failed due to network issues
-        console.log(`Category caching couldn't be proceed`, e)
+        // Uses the mixin method to append messages to the toast store
+        this.$error(`Category caching couldn't be proceed`)
+        console.log(e)
       } finally {
         this.isAddingCacheForOffline = false
       }
@@ -140,6 +146,7 @@ export default {
       await caches.delete(this.currentCategoryImgCacheName)
 
       this.unmarkCategoryAsCached()
+      this.$success(`The category "${this.$route.params.category}" has been successfully cleared !`)
     },
     // Use the local storage to keep track of cached category
     // This allows us to enabled / disable the "Save for offline..." button
